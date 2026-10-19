@@ -1,55 +1,54 @@
-import pygame as pg
-import numpy as np
-import constants as c
-#initialise pygame
+import pygame as pg 
+import numpy as np  
+import constants as c  
+
+# Initialise all available Pygame modules.
 pg.init()
 
-
-#create clock object to control the frame rate
+# Create a clock object so the game loop can run at a consistent frame rate.
 clock = pg.time.Clock()
 
-
-#create the game window
+# Create the game window using the dimensions stored in the constants module.
 screen = pg.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT))
-#set caption for the game window
+# Set the text shown in the window title bar.
 pg.display.set_caption("TD Prototype 1")
 
-font = pg.font.Font(None, 36)
-button_font = pg.font.Font(None, 32)
-test_button = pg.Rect(
-    (c.SCREEN_WIDTH - 220) // 2,
-    (c.SCREEN_HEIGHT - 60) // 2,
-    220,
-    60,
-)
-button_clicks = 0
-button_message = "Click the button to test it"
+# Define the button's position and size.
+button_rect = pg.Rect(540, 320, 200, 80)
+# Store the button's grey colour as red, green, and blue values.
+button_colour = (160, 160, 160)
+# Load a Helvetica font for the button label.
+main_font = pg.font.SysFont("Helvetica", 32)
+# Render the button label as black text with no background box.
+button_text = main_font.render("Click me", True, (0, 0, 0))
+
 
 run = True
 while run:
-    #event handling
+    #Event handling 
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-            if test_button.collidepoint(event.pos):
-                button_clicks += 1
-                button_message = f"Button clicked {button_clicks} time(s)"
+            # Detect whether the click position is inside the button rectangle.
+            if button_rect.collidepoint(event.pos):
+                # Report the click without changing the button's appearance or state.
+                print("Button clicked")
 
-    mouse_position = pg.mouse.get_pos()
-    button_colour = (70, 150, 220) if test_button.collidepoint(mouse_position) else (45, 105, 170)
+    
+    background_colour = (255, 255, 255) # White
+    screen.fill(background_colour)
 
-    screen.fill((25, 30, 45))
-    title = font.render("Tower Defence Prototype", True, (240, 240, 240))
-    message = font.render(button_message, True, (220, 220, 220))
-    button_label = button_font.render("Test Button", True, (255, 255, 255))
+    # Draw the grey button on the screen.
+    pg.draw.rect(screen, button_colour, button_rect)
+    # Position the text in the centre of the button.
+    text_position = button_text.get_rect(center=button_rect.center)
+    # Draw the button text at the calculated position.
+    screen.blit(button_text, text_position)
 
-    screen.blit(title, title.get_rect(center=(c.SCREEN_WIDTH // 2, 120)))
-    screen.blit(message, message.get_rect(center=(c.SCREEN_WIDTH // 2, 220)))
-    pg.draw.rect(screen, button_colour, test_button, border_radius=8)
-    screen.blit(button_label, button_label.get_rect(center=test_button.center))
+    # Show the completed frame in the game window.
     pg.display.flip()
-    clock.tick(c.FPS) #set the frame rate to 60 fps
+    clock.tick(c.FPS)
 
-
+# Shut down Pygame cleanly after the game loop ends.
 pg.quit()
